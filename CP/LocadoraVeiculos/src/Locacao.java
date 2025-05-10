@@ -6,17 +6,21 @@ public class Locacao {
     private LocalDate dataInicio;
     private LocalDate dataFim;
 
-    public Locacao(Cliente cliente, Veiculo veiculo) {
-        if (!veiculo.isDisponivel()) {
-            throw new IllegalArgumentException("Veículo não está disponível");
-        }
+    public Locacao(Cliente cliente, Veiculo veiculo, LocalDate dataFim) {
         this.cliente = cliente;
         this.veiculo = veiculo;
-        veiculo.setDisponivel(false);
+        this.dataInicio = LocalDate.now();
+        this.dataFim = dataFim;
+    }
+    public LocalDate getDataInicio() {
+        return dataInicio;
+    }
+    public LocalDate getDataFim() {
+        return dataFim;
     }
 
-    public void finalizarLocacao() {
-        veiculo.setDisponivel(true);
+    public void setDataFim(LocalDate dataFim) {
+        this.dataFim = dataFim;
     }
 
     public Cliente getCliente() {
@@ -27,4 +31,3 @@ public class Locacao {
         return veiculo;
     }
 }
-
