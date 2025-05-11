@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Principal {
@@ -8,7 +9,7 @@ public class Principal {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public static void main(String[] args) {
-        ArrayList<Locacao> locacoes = new ArrayList<>();
+        List<Locacao> locacoes = new ArrayList<>();
         String controlador = "1";
 
         while (controlador.equals("1")) {
@@ -21,52 +22,38 @@ public class Principal {
 
             Veiculo veiculo = cadastrarVeiculo(locacoes);
             Cliente cliente = cadastrarCliente();
-            if (clienteJaPossuiLocacao(locacoes, cliente.getCpf())) {
+
+            if (Locacao.clienteJaPossuiLocacao(locacoes, cliente.getCpf())) {
                 System.out.println("O cliente já possui uma locação ativa. Não é possível alugar outro veículo.");
                 continue;
             }
+
             LocalDate dataFim = obterData();
 
             locacoes.add(new Locacao(cliente, veiculo, dataFim));
             System.out.println("\nVeículo alugado com sucesso!");
         }
+
         scanner.close();
     }
 
-    private static Veiculo cadastrarVeiculo(ArrayList<Locacao> locacoes) {
+    private static Veiculo cadastrarVeiculo(List<Locacao> locacoes) {
         System.out.println("Cadastro de veículo:");
-        String placa, modelo;
+        Veiculo veiculo;
         while (true) {
             System.out.print("Digite a placa: ");
-            placa = scanner.nextLine();
+            String placa = scanner.nextLine();
             System.out.print("Digite o modelo: ");
-            modelo = scanner.nextLine();
-            if (veiculoJaAlugado(locacoes, placa, modelo)) {
-                System.out.println("Já existe uma locação registrada com esse veículo (placa e modelo). Digite outro.");
+            String modelo = scanner.nextLine();
+            veiculo = new Veiculo(placa, modelo);
+
+            if (Locacao.veiculoJaAlugado(locacoes, veiculo)) {
+                System.out.println("Já existe uma locação registrada com esse veículo. Digite outro.");
             } else {
                 break;
             }
         }
-        return new Veiculo(placa, modelo);
-    }
-
-    private static boolean veiculoJaAlugado(ArrayList<Locacao> locacoes, String placa, String modelo) {
-        for (Locacao loc : locacoes) {
-            if (loc.getVeiculo().getPlaca().equalsIgnoreCase(placa) &&
-                loc.getVeiculo().getModelo().equalsIgnoreCase(modelo)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean clienteJaPossuiLocacao(ArrayList<Locacao> locacoes, String cpf) {
-        for (Locacao loc : locacoes) {
-            if (loc.getCliente().getCpf().equalsIgnoreCase(cpf)) {
-                return true;
-            }
-        }
-        return false;
+        return veiculo;
     }
 
     private static Cliente cadastrarCliente() {
@@ -81,7 +68,7 @@ public class Principal {
     private static LocalDate obterData() {
         while (true) {
             try {
-                System.out.print("A data que pretende devolver (formato dd/MM/yyyy):" );
+                System.out.print("A data que pretende devolver (formato dd/MM/yyyy): ");
                 String dataString = scanner.nextLine();
                 return LocalDate.parse(dataString, formatter);
             } catch (Exception e) {

@@ -15,4 +15,8 @@ public class Veiculo {
     public String getModelo() {
         return modelo;
     }
+
+    public boolean EhmesmoVeiculo(Veiculo outro) {
+        return this.placa.equalsIgnoreCase(outro.getPlaca());
+    }
 }
